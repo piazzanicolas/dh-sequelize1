@@ -10,8 +10,7 @@ function readHTML (fileName) {
 
 const controller = {
 	root: (req, res) => {
-		let html = readHTML('index');
-		res.send(html);
+		res.send('Listado de películas');
     },
     detail: (req, res) => {
 		res.send('detalle');
