@@ -10,10 +10,10 @@ router.get('/', moviesController.root);
 
 router.get('/detail/:id', moviesController.detail);
 
-router.get('/new', moviesController.new);
+router.get('/new', moviesController.news);
 
 router.get('/recommended', moviesController.recommend);
 
-router.post('/search', moviesController.search);
+router.get('/search', moviesController.search);
 
 module.exports = router;

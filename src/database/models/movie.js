@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 		genre_id: DataTypes.INTEGER,
 	}, {
 		// tableName: 'peliculas',
-		// timestamps: false
+		timestamps: false
 	});
 
 	return movie;

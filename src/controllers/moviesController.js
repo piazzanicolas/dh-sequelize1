@@ -1,30 +1,74 @@
-const fs = require('fs');
-const path = require('path');
+const db = require ('../database/models');
+const sequelize = db.sequelize;
+const Op = db.Sequelize.Op;
+const Movies = db.movies;
 
-// ************ Function to Read an HTML File ************
-function readHTML (fileName) {
-	let filePath = path.join(__dirname, `/../views/${fileName}.html`);
-	let htmlFile = fs.readFileSync(filePath, 'utf-8');
-	return htmlFile;
+function OrderbyRating() {
+	if (req.body.order_rating){
+		return 'rating'
+	} else {
+		return 'title'
+	}
 }
 
-const controller = {
+module.exports = {
 	root: (req, res) => {
-		res.send('Listado de películas');
+		Movies
+			.findAll()
+			.then (movies => {
+				return res.render('movies/index', {movies});
+			})
+			.catch(error => res.send(error));
     },
     detail: (req, res) => {
-		res.send('detalle');
+		Movies
+			.findByPk(req.params.id)
+			.then (movie => {
+				return res.render('movies/detail', {movie});
+			})
+			.catch(error => res.send(error));
     },
-    new: (req, res) => {
-		res.send('nuevas');
+    news: (req, res) => {
+		Movies
+			.findAll({
+				order: [
+					['release_date', 'DESC']
+				],
+				limit: 5
+			})
+			.then (movies => {
+				return res.render('movies/news', {movies});
+			})
+			.catch(error => res.send(error));
     },
     recommend: (req, res) => {
-		res.send('recomendadas');
+		Movies
+			.findAll({
+				where:{
+					rating: { [Op.gte] : 8 }
+				},
+				order: [
+					['rating', 'DESC']
+				]
+			})
+			.then (movies => {
+				return res.render('movies/recommend', {movies});
+			})
+			.catch(error => res.send(error));
     },
     search: (req, res) => {
-		let html = readHTML('index');
-		res.send(html);
+		Movies.findAll({
+			where: {
+				title: {[Op.like]: `%${req.query.search}%`}
+			},
+			//order: [
+			//	[OrderbyRating(),'DESC']
+			//]
+		})
+		.then(results => {
+			res.locals.results = results;
+			return res.render('movies/search');
+		})
+		.catch(error => res.send(error));
 	},
 };
-
-module.exports = controller
