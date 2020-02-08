@@ -3,11 +3,11 @@ const sequelize = db.sequelize;
 const Op = db.Sequelize.Op;
 const Movies = db.movies;
 
-function OrderbyRating() {
-	if (req.body.order_rating){
-		return 'rating'
+function OrderbyRating(req) {
+	if (req.query.order_rating){
+		return ['rating','DESC']
 	} else {
-		return 'title'
+		return ['title']
 	}
 }
 
@@ -61,9 +61,9 @@ module.exports = {
 			where: {
 				title: {[Op.like]: `%${req.query.search}%`}
 			},
-			//order: [
-			//	[OrderbyRating(),'DESC']
-			//]
+			order: [
+				OrderbyRating(req)
+			]
 		})
 		.then(results => {
 			res.locals.results = results;
